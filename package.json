@@ -1,0 +1,24 @@
+{
+  "name": "koalie_backend",
+  "version": "1.0.0",
+  "description": "backend for the koalie app",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "grunt": "^1.0.1",
+    "mongodb": "^2.2.0"
+  },
+  "devDependencies": {
+    "express": "^4.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://tonymuu@bitbucket.org/tonymuu/koaliebackend.git"
+  },
+  "author": "Tony Mu",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/tonymuu/koaliebackend#readme"
+}
