@@ -5,11 +5,18 @@
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "grunt": "^1.0.1",
-    "mongodb": "^2.2.0"
+    "grunt-coffeelint": "0.0.16",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-execute": "^0.2.2",
+    "grunt-express-server": "^0.5.3",
+    "mongodb": "^1.4.40",
+    "stormpath": "^0.18.3"
   },
   "devDependencies": {
-    "express": "^4.14.0"
+    "grunt-node-inspector": "^0.4.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
