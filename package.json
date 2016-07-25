@@ -13,7 +13,18 @@
     "grunt-execute": "^0.2.2",
     "grunt-express-server": "^0.5.3",
     "mongodb": "^1.4.40",
-    "stormpath": "^0.18.3"
+    "mongoose" : "~3.8.1",
+    "passport" : "~0.1.17",
+    "passport-local" : "~0.1.6",
+    "passport-facebook" : "~1.0.2",
+    "passport-twitter" : "~1.0.2",
+    "passport-google-oauth" : "~0.1.5",
+    "connect-flash" : "~0.1.1",
+    "bcrypt-nodejs" : "latest",
+    "morgan": "~1.0.0",
+    "cookie-parser": "~1.0.0",
+    "method-override": "~1.0.0",
+    "express-session": "~1.0.0"     
   },
   "devDependencies": {
     "grunt-node-inspector": "^0.4.2"
