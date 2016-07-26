@@ -23,11 +23,13 @@ app.set('port', process.env.PORT || 3000)
 
 mongoose.connect(configDB.url)
 
-# require('./config/passport')(passport)
+require('./config/passport')(passport)
 
 app.use morgan 'dev'
 app.use cookieParser()
 app.use bodyParser()
+
+app.set('view engine', 'ejs')
 
 # set up passport
 app.use session { secret: 'tonymuisanawesomedeveloperwhowrotethisapp' }
@@ -36,7 +38,7 @@ app.use passport.session()
 app.use flash()
 
 # routes
-require('./app/route.js')(app, passport)
+require('./app/routes.js')(app, passport)
 
 mongoHost = 'localhost'
 mongoPort = 27017

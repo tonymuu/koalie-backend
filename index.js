@@ -1,7 +1,21 @@
 (function() {
-  var CollectionDriver, MongoClient, Server, app, bodyParser, collectionDriver, express, mongoClient, mongoHost, mongoPort, path;
+  var CollectionDriver, MongoClient, Server, app, bodyParser, collectionDriver, configDB, cookieParser, express, flash, mongoClient, mongoHost, mongoPort, mongoose, morgan, passport, path, session;
 
   express = require('express');
+
+  mongoose = require('mongoose');
+
+  passport = require('passport');
+
+  flash = require('connect-flash');
+
+  morgan = require('morgan');
+
+  cookieParser = require('cookie-parser');
+
+  session = require('express-session');
+
+  configDB = require('./config/database.js');
 
   path = require('path');
 
@@ -16,6 +30,30 @@
   app = express();
 
   app.set('port', process.env.PORT || 3000);
+
+  mongoose.connect(configDB.url);
+
+  require('./config/passport')(passport);
+
+  app.use(morgan('dev'));
+
+  app.use(cookieParser());
+
+  app.use(bodyParser());
+
+  app.set('view engine', 'ejs');
+
+  app.use(session({
+    secret: 'tonymuisanawesomedeveloperwhowrotethisapp'
+  }));
+
+  app.use(passport.initialize());
+
+  app.use(passport.session());
+
+  app.use(flash());
+
+  require('./app/routes.js')(app, passport);
 
   mongoHost = 'localhost';
 
@@ -35,97 +73,7 @@
     return collectionDriver = new CollectionDriver(db);
   });
 
-  app.use(bodyParser());
-
   app.use(express["static"](path.join(__dirname, 'public')));
-
-  app.get('/:collection', function(req, res) {
-    var params;
-    params = req.params;
-    return collectionDriver.findAll(req.params.collection, function(error, objs) {
-      if (error) {
-        return res.status(400).send(error);
-      } else {
-        return res.status(200).send(objs);
-      }
-    });
-  });
-
-  app.get('/:collection/:entity', function(req, res) {
-    var collection, entity, params;
-    params = req.params;
-    collection = params.collection;
-    entity = params.entity;
-    if (entity) {
-      return collectionDriver.get(collection, entity, function(error, objs) {
-        if (error) {
-          return res.status(400).send(error);
-        } else {
-          return res.status(200).send(objs);
-        }
-      });
-    } else {
-      return res.status(400).send({
-        error: 'bad url',
-        url: req.url
-      });
-    }
-  });
-
-  app.post('/:collection', function(req, res) {
-    var collection, object;
-    object = req.body;
-    collection = req.params.collection;
-    return collectionDriver.save(collection, object, function(error, docs) {
-      if (error) {
-        return res.status(400).send(error);
-      } else {
-        return res.status(201).send(docs);
-      }
-    });
-  });
-
-  app.put('/:collection/:entity', function(req, res) {
-    var collection, entity, error, params;
-    params = req.params;
-    entity = params.entity;
-    collection = params.collection;
-    if (typeof eneity !== "undefined" && eneity !== null) {
-      return collectionDriver.update(collection, req.body, entity, function(error, objs) {
-        if (error != null) {
-          return res.status(400).send(error);
-        } else {
-          return res.status(200).send(objs);
-        }
-      });
-    } else {
-      error = {
-        "message": "Cannot PUT a whole collection"
-      };
-      return res.status(400).send(error);
-    }
-  });
-
-  app["delete"]('/:collection/:entity', function(req, res) {
-    var collection, entity, error, params;
-    params = req.params;
-    collection = params.collection;
-    entity = params.entity;
-    if (entity != null) {
-      return collectionDriver["delete"](collection, entity, function(error, objs) {
-        if (error != null) {
-          return res.status(400).send(error);
-        } else {
-          return res.sendStatus(200);
-        }
-      });
-    } else {
-      error = {
-        "message": "Cannot Delete a whole collection!"
-      };
-      return res.status(400).send(error);
-    }
-  });
 
   app.listen(3000, function() {
     return console.log('Server listening on port 3000...');
