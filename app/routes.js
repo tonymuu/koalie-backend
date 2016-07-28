@@ -1,12 +1,7 @@
 (function() {
+  var isLoggedIn;
+
   module.exports = function(app, passport) {
-    var isLoggedIn;
-    isLoggedIn = function(req, res, next) {
-      if (req.isAuthenticated()) {
-        next();
-      }
-      return res.redirect('/');
-    };
     app.get('/', function(req, res) {
       return res.render('index.ejs');
     });
@@ -21,7 +16,7 @@
       });
     });
     app.get('/profile', isLoggedIn, function(req, res) {
-      return res.render('profiles.ejs', {
+      return res.render('profile.ejs', {
         user: req.user
       });
     });
@@ -29,11 +24,30 @@
       req.logout();
       return res.redirect('/');
     });
-    return app.post('/signup', passport.authenticate('local-signup', {
+    app.post('/signup', passport.authenticate('local-signup', {
       successRedirect: '/profile',
       failureRedirect: '/signup',
       failureFlash: true
     }));
+    app.post('/login', passport.authenticate('local-login', {
+      successRedirect: '/profile',
+      failureRedirect: '/login',
+      failureFlash: true
+    }));
+    app.get('/auth/facebook', passport.authenticate('facebook', {
+      scope: 'email'
+    }));
+    return app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+      successRedirect: '/profile',
+      failureRedirect: '/'
+    }));
+  };
+
+  isLoggedIn = function(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
+    return res.redirect('/');
   };
 
 }).call(this);

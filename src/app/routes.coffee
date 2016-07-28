@@ -1,9 +1,4 @@
 module.exports = (app, passport) ->
-  # route middleware to make sure a user is logged in
-  isLoggedIn = (req, res, next) ->
-    if req.isAuthenticated() then next()
-    res.redirect('/')
-
   app.get('/', (req, res) ->
     res.render('index.ejs'))
 
@@ -23,7 +18,7 @@ module.exports = (app, passport) ->
 
   # we will use route middleware to verify this (the isLoggedIn function)
   app.get('/profile', isLoggedIn, (req, res) ->
-    res.render('profiles.ejs',
+    res.render('profile.ejs',
       user: req.user)) # getting user from session
 
   app.get('/logout', (req, res) ->
@@ -32,10 +27,26 @@ module.exports = (app, passport) ->
 
   # process the signup form
   app.post('/signup', passport.authenticate('local-signup',
-    successRedirect: '/profile',
-    failureRedirect: '/signup',
+    successRedirect: '/profile'
+    failureRedirect: '/signup'
     failureFlash: true))
 
+  app.post('/login', passport.authenticate('local-login',
+    successRedirect: '/profile'
+    failureRedirect: '/login'
+    failureFlash: true))
+
+  app.get('/auth/facebook', passport.authenticate('facebook',
+    scope: 'email'))
+
+  app.get('/auth/facebook/callback', passport.authenticate('facebook',
+    successRedirect: '/profile'
+    failureRedirect: '/'))
+
+# route middleware to make sure a user is logged in
+isLoggedIn = (req, res, next) ->
+  if req.isAuthenticated() then return next()
+  res.redirect('/')
 
 
   # app.get('/:collection', (req, res) ->

@@ -32,10 +32,10 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-coffeelint'
 
-  grunt.registerTask 'default', ['coffee', 'coffeelint']
+  grunt.registerTask 'default', ['coffee:compile', 'coffeelint']
   grunt.registerTask 'server', ['default', 'express', 'watch:scripts']
 
 
-  # node-debug app.js
+  # node-debug app.js then go to dev port 3000
   # ps -ax | grep node
   # kill -9 PID

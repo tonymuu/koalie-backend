@@ -15,7 +15,7 @@ path = require 'path'
 bodyParser = require 'body-parser'
 MongoClient = require('mongodb').MongoClient
 Server = require('mongodb').Server
-CollectionDriver = require './CollectionDriver.js'
+# CollectionDriver = require './CollectionDriver.js'
 
 # set up express app
 app = express()
@@ -40,18 +40,19 @@ app.use flash()
 # routes
 require('./app/routes.js')(app, passport)
 
-mongoHost = 'localhost'
-mongoPort = 27017
-collectionDriver = ""
-
-mongoClient = new MongoClient(new Server(mongoHost, mongoPort))
-mongoClient.open (err, mongoClient) ->
-  if !mongoClient
-    console.error "Error! Exiting... No MongoDB found."
-    process.exit(1)
-  db = mongoClient.db "MyDatabase"
-  collectionDriver = new CollectionDriver db
+# mongoHost = 'localhost'
+# mongoPort = 27017
+# collectionDriver = ""
+#
+# mongoClient = new MongoClient(new Server(mongoHost, mongoPort))
+# mongoClient.open (err, mongoClient) ->
+#   if !mongoClient
+#     console.error "Error! Exiting... No MongoDB found."
+#     process.exit(1)
+#   db = mongoClient.db "MyDatabase"
+#   collectionDriver = new CollectionDriver db
 
 app.use express.static path.join __dirname, 'public'
 
-app.listen(3000, -> console.log 'Server listening on port 3000...')
+app.listen(process.env.PORT || 3000, ->
+  console.log 'Server listening on port 3000...')

@@ -1,9 +1,13 @@
 (function() {
-  var LocalStrategy, User;
+  var FacebookStrategy, LocalStrategy, User, configAuth;
 
   LocalStrategy = require('passport-local').Strategy;
 
+  FacebookStrategy = require('passport-facebook').Strategy;
+
   User = require('../app/models/user');
+
+  configAuth = require('./auth.js');
 
   module.exports = function(passport) {
     passport.serializeUser(function(user, done) {
@@ -14,7 +18,41 @@
         return done(err, user);
       });
     });
-    return passport.use('local-signup', new LocalStrategy({
+    passport.use(new FacebookStrategy({
+      clientID: configAuth.facebookAuth.clientID,
+      clientSecret: configAuth.facebookAuth.clientSecret,
+      callbackURL: configAuth.facebookAuth.callbackURL,
+      profileFields: ["emails", "photos"]
+    }, function(token, refreshToken, profile, done) {
+      return process.nextTick(function() {
+        return User.findOne({
+          'facebook.id': profile.id
+        }, function(err, user) {
+          var newUser;
+          if (err != null) {
+            return done(err);
+          }
+          if (user != null) {
+            return done(null, user);
+          } else {
+            newUser = new User();
+            newUser.facebook.id = profile.id;
+            newUser.facebook.token = token;
+            newUser.facebook.name = profile.name.givenName + " " + profile.name.familyName;
+            newUser.facebook.email = profile.emails[0].value;
+            newUser.facebook.picture = profile.photos[0].value;
+            return newUser.save(function() {
+              if (err != null) {
+                throw err;
+              } else {
+                return done(null, newUser);
+              }
+            });
+          }
+        });
+      });
+    }));
+    passport.use('local-signup', new LocalStrategy({
       usernameField: 'email',
       passwordField: 'password',
       passReqToCallback: true
@@ -41,6 +79,26 @@
             });
           }
         });
+      });
+    }));
+    return passport.use('local-login', new LocalStrategy({
+      usernameField: 'email',
+      passwordField: 'password',
+      passReqToCallback: true
+    }, function(req, email, password, done) {
+      return User.findOne({
+        'local.email': email
+      }, function(err, user) {
+        if (err != null) {
+          return done(err);
+        }
+        if (user == null) {
+          return done(null, false, req.flash('loginMessage', 'No user found.'));
+        }
+        if (!(user != null ? user.validPassword(password) : void 0)) {
+          return done(null, false, req.flash('loginMessage', 'Wrong password.'));
+        }
+        return done(null, user);
       });
     }));
   };
