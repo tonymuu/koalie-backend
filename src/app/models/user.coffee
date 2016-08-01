@@ -5,13 +5,13 @@ bcrypt = require 'bcrypt-nodejs'
 # define the schema
 userSchema = mongoose.Schema(
   local:
-    email: String,
+    email: String
     password: String
   facebook:
-    id: String,
-    token: String,
-    email: String,
-    name: String,
+    id: String
+    token: String
+    email: String
+    name: String
     picture: String)
 
 # methods

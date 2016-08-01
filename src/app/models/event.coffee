@@ -1,11 +1,19 @@
 mongoose = require 'mongoose'
+ObjectId = mongoose.Schema.Types.ObjectId
+
 
 eventSchema = mongoose.Schema(
   event:
-    name: String,
-    size: Number,
-    date_create: Date,
-    date_end: Date,
-    member_ids: [Schema.Types.ObjectId],
-    media_ids: [Schema.Types.ObjectId],
+    name: String
+    size: Number
+    date_create:
+      type: Date
+      defalt: Date.now
+    date_end: Date
+    member_ids: [
+      type: ObjectId
+      ref: 'User']
+    media_ids: [
+      type: ObjectId
+      ref: 'Media']
     )

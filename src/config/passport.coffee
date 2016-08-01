@@ -1,8 +1,9 @@
 # load all things
 LocalStrategy = require('passport-local').Strategy
 FacebookStrategy = require('passport-facebook').Strategy
+FacebookTokenStrategy = require('passport-facebook-token')
 
-User = require '../app/models/user'
+User = require '../app/models/User'
 
 configAuth = require './auth.js'
 
@@ -14,6 +15,24 @@ module.exports = (passport) ->
   passport.deserializeUser (id, done) ->
     User.findById(id, (err, user) ->
       done(err, user))
+
+  passport.use(new FacebookTokenStrategy({
+    clientID: configAuth.facebookAuth.clientID
+    clientSecret: configAuth.facebookAuth.clientSecret
+    }, (accessToken, refreshToken, profile, done) ->
+      User.findOne( 'facebook.id': profile.id, (err, user) ->
+        if err? then return done err
+        if user? then return done(null, user)
+        else
+          newUser = new User()
+          newUser.facebook.id = profile.id
+          newUser.facebook.token = token
+          newUser.facebook.name = "#{profile.name.givenName} #{profile.name.familyName}"
+          newUser.facebook.email = profile.emails[0].value
+          newUser.facebook.picture = profile.photos[0].value
+          newUser.save ->
+            if err? then throw err
+            else return done(null, newUser))))
 
   passport.use(new FacebookStrategy(
     clientID: configAuth.facebookAuth.clientID
@@ -32,7 +51,6 @@ module.exports = (passport) ->
             newUser.facebook.name = "#{profile.name.givenName} #{profile.name.familyName}"
             newUser.facebook.email = profile.emails[0].value
             newUser.facebook.picture = profile.photos[0].value
-
             newUser.save ->
               if err? then throw err
               else return done(null, newUser))))
@@ -46,8 +64,8 @@ module.exports = (passport) ->
       process.nextTick ->
         # find a user whose email is the same as the forms email
         User.findOne( 'local.email': email, (err, user) ->
-          if err? then done(err)
-          if user? then done(null, false, req.flash('signupMessage', 'The email has already been taken!'))
+          if err? then return done(err)
+          if user? then return done(null, false, req.flash('signupMessage', 'The email has already been taken!'))
           else
             newUser = User()
             newUser.local.email = email

@@ -1,5 +1,5 @@
 (function() {
-  var CollectionDriver, MongoClient, Server, app, bodyParser, collectionDriver, configDB, cookieParser, express, flash, mongoClient, mongoHost, mongoPort, mongoose, morgan, passport, path, session;
+  var MongoClient, Server, app, bodyParser, configDB, cookieParser, express, flash, mongoose, morgan, passport, path, session;
 
   express = require('express');
 
@@ -24,8 +24,6 @@
   MongoClient = require('mongodb').MongoClient;
 
   Server = require('mongodb').Server;
-
-  CollectionDriver = require('./CollectionDriver.js');
 
   app = express();
 
@@ -55,27 +53,9 @@
 
   require('./app/routes.js')(app, passport);
 
-  mongoHost = 'localhost';
-
-  mongoPort = 27017;
-
-  collectionDriver = "";
-
-  mongoClient = new MongoClient(new Server(mongoHost, mongoPort));
-
-  mongoClient.open(function(err, mongoClient) {
-    var db;
-    if (!mongoClient) {
-      console.error("Error! Exiting... No MongoDB found.");
-      process.exit(1);
-    }
-    db = mongoClient.db("MyDatabase");
-    return collectionDriver = new CollectionDriver(db);
-  });
-
   app.use(express["static"](path.join(__dirname, 'public')));
 
-  app.listen(3000, function() {
+  app.listen(process.env.PORT || 3000, function() {
     return console.log('Server listening on port 3000...');
   });
 

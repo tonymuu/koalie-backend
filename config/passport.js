@@ -1,11 +1,13 @@
 (function() {
-  var FacebookStrategy, LocalStrategy, User, configAuth;
+  var FacebookStrategy, FacebookTokenStrategy, LocalStrategy, User, configAuth;
 
   LocalStrategy = require('passport-local').Strategy;
 
   FacebookStrategy = require('passport-facebook').Strategy;
 
-  User = require('../app/models/user');
+  FacebookTokenStrategy = require('passport-facebook-token');
+
+  User = require('../app/models/User');
 
   configAuth = require('./auth.js');
 
@@ -18,6 +20,36 @@
         return done(err, user);
       });
     });
+    passport.use(new FacebookTokenStrategy({
+      clientID: configAuth.facebookAuth.clientID,
+      clientSecret: configAuth.facebookAuth.clientSecret
+    }, function(accessToken, refreshToken, profile, done) {
+      return User.findOne({
+        'facebook.id': profile.id
+      }, function(err, user) {
+        var newUser;
+        if (err != null) {
+          return done(err);
+        }
+        if (user != null) {
+          return done(null, user);
+        } else {
+          newUser = new User();
+          newUser.facebook.id = profile.id;
+          newUser.facebook.token = token;
+          newUser.facebook.name = profile.name.givenName + " " + profile.name.familyName;
+          newUser.facebook.email = profile.emails[0].value;
+          newUser.facebook.picture = profile.photos[0].value;
+          return newUser.save(function() {
+            if (err != null) {
+              throw err;
+            } else {
+              return done(null, newUser);
+            }
+          });
+        }
+      });
+    }));
     passport.use(new FacebookStrategy({
       clientID: configAuth.facebookAuth.clientID,
       clientSecret: configAuth.facebookAuth.clientSecret,
@@ -63,7 +95,7 @@
         }, function(err, user) {
           var newUser;
           if (err != null) {
-            done(err);
+            return done(err);
           }
           if (user != null) {
             return done(null, false, req.flash('signupMessage', 'The email has already been taken!'));
