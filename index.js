@@ -41,10 +41,6 @@
 
   app.set('view engine', 'ejs');
 
-  app.use(session({
-    secret: 'tonymuisanawesomedeveloperwhowrotethisapp'
-  }));
-
   app.use(passport.initialize());
 
   app.use(passport.session());
