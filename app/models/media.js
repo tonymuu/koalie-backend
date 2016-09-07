@@ -6,19 +6,21 @@
   ObjectId = mongoose.Schema.Types.ObjectId;
 
   mediaSchema = mongoose.Schema({
-    media: {
-      user_id: {
-        type: ObjectId,
-        ref: 'User'
-      },
-      stored_path: {
-        type: String,
-        "default": ""
-      },
-      likes: {
-        type: Number,
-        "default": 0
-      }
+    user_id: {
+      type: ObjectId,
+      ref: 'User'
+    },
+    event_id: {
+      type: ObjectId,
+      ref: 'Event'
+    },
+    stored_path: {
+      type: String,
+      "default": ""
+    },
+    likes: {
+      type: Number,
+      "default": 0
     }
   });
 

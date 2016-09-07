@@ -1,9 +1,11 @@
 (function() {
-  var bcrypt, mongoose, userSchema;
+  var ObjectId, bcrypt, mongoose, userSchema;
 
   mongoose = require('mongoose');
 
   bcrypt = require('bcrypt-nodejs');
+
+  ObjectId = mongoose.Schema.Types.ObjectId;
 
   userSchema = mongoose.Schema({
     local: {
@@ -15,7 +17,13 @@
       token: String,
       email: String,
       name: String,
-      picture: String
+      picture: String,
+      events: [
+        {
+          type: ObjectId,
+          ref: 'Event'
+        }
+      ]
     }
   });
 

@@ -33,7 +33,6 @@ app.set('view engine', 'ejs')
 
 # set up passport
 # The following line is not my app secret for security reasons. Use your own app secret!!!
-# app.use session { secret: 'tonymuisanawesomedeveloperwhowrotethisapp' }
 app.use passport.initialize()
 app.use passport.session()
 app.use flash()

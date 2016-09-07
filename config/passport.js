@@ -36,7 +36,7 @@
         } else {
           newUser = new User();
           newUser.facebook.id = profile.id;
-          newUser.facebook.token = token;
+          newUser.facebook.token = accessToken;
           newUser.facebook.name = profile.name.givenName + " " + profile.name.familyName;
           newUser.facebook.email = profile.emails[0].value;
           newUser.facebook.picture = profile.photos[0].value;

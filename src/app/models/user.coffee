@@ -1,6 +1,8 @@
-# load the libs
+  # load the libs
 mongoose = require 'mongoose'
 bcrypt = require 'bcrypt-nodejs'
+ObjectId = mongoose.Schema.Types.ObjectId
+
 
 # define the schema
 userSchema = mongoose.Schema(
@@ -12,7 +14,12 @@ userSchema = mongoose.Schema(
     token: String
     email: String
     name: String
-    picture: String)
+    picture: String
+    events: [
+      type: ObjectId
+      ref: 'Event'
+    ])
+
 
 # methods
 # generating a hash
